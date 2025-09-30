@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+    <style>
+      .container { padding: 20px; }
+      .button-container { margin-top: 20px; text-align: right; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h4>Buscar Links de Arquivos</h4>
+      <p>Cole a URL da pasta do Google Drive onde os arquivos estão localizados.</p>
+      
+      <div class="block">
+        <label for="folder-url">URL da Pasta:</label>
+        <input type="text" id="folder-url" style="width: 100%;">
+      </div>
+
+      <div class="button-container">
+        <button id="process-button" class="action" onclick="iniciarBusca()">Buscar Links</button>
+        <button onclick="google.script.host.close()">Cancelar</button>
+      </div>
+    </div>
+
+    <script>
+      function iniciarBusca() {
+        var url = document.getElementById('folder-url').value;
+        if (!url) {
+          alert('Por favor, insira a URL da pasta.');
+          return;
+        }
+        
+        document.getElementById('process-button').disabled = true;
+        document.getElementById('process-button').textContent = 'Buscando...';
+
+        // ATENÇÃO: A chamada agora é para a função "processarBuscaDeLinks"
+        google.script.run
+          .withSuccessHandler(function() {
+            google.script.host.close();
+          })
+          .withFailureHandler(function(error) {
+            alert('Erro: ' + error.message);
+            google.script.host.close();
+          })
+          .processarBuscaDeLinks(url);
+      }
+    </script>
+  </body>
+</html>
