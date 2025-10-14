@@ -1,10 +1,15 @@
+/**
+ * @OnlyCurrentDoc
+ */
+
 // --- FUNÇÃO DE MENU ---
 // Cria os dois menus personalizados na planilha ao abri-la
 function onOpen() {
   SpreadsheetApp.getUi()
       .createMenu('Disparador de E-mails')
-      .addItem('Buscar Links dos Arquivos', 'abrirSeletorDePasta_BuscarLinks')
-      .addItem('Enviar E-mails Pendentes', 'enviarEmails')
+      .addItem('1. Buscar Links dos Arquivos', 'abrirSeletorDePasta_BuscarLinks')
+      .addSeparator() // Adiciona uma linha divisória no menu
+      .addItem('2. Enviar E-mails Pendentes', 'enviarEmails')
       .addToUi();
 }
 
@@ -75,6 +80,7 @@ function enviarEmails() {
         const linkDoAnexo = linha[5]; // Coluna F
 
         mensagem = mensagem.replace("{{nome}}", nome);
+        const opcoesEmail = { name: 'Sistema de RH' };
         
         // Verifica se há um link de anexo válido
         if (linkDoAnexo && linkDoAnexo.startsWith("http")) {
@@ -82,11 +88,11 @@ function enviarEmails() {
           const anexo = DriveApp.getFileById(idDoArquivo);
           opcoesEmail.attachments = [anexo];
           
-          MailApp.sendEmail(email, assunto, mensagem);
+          MailApp.sendEmail(email, assunto, mensagem, opcoesEmail);
           planilha.getRange(indice + 2, 7).setValue("E-mail com anexo enviado");
         } else {
           // Se não houver link ou o link for inválido (ex: "Arquivo não encontrado"), envia sem anexo
-          MailApp.sendEmail(email, assunto, mensagem);
+          MailApp.sendEmail(email, assunto, mensagem, opcoesEmail);
           planilha.getRange(indice + 2, 7).setValue("E-mail enviado (sem anexo)");
         }
       }
